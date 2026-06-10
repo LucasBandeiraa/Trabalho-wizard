@@ -1,7 +1,7 @@
 const express = require('express');
-const { fetchSpells, shuffleArray } = require('../services/potterApi');
-const { calculateSpellDamage } = require('../services/statsCalculator');
-const CONSTANTS = require('../constants');
+const { fetchSpells, shuffleArray } = require('../services/potterApi.js');
+const { calculateSpellDamage } = require('../services/statsCalculator.js');
+const CONSTANTS = require('../constants.js');
 
 const router = express.Router();
 

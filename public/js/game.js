@@ -1,6 +1,13 @@
-import { fetchPack, fetchSpells, fetchCpuDeck } from './api.js';
-import { renderCardHTML, renderDeckBadgesHTML, renderSpellsHTML, showScreen, logBattle, setStatus } from './render.js';
-import { CONFIG, shuffleArray, sleep } from './utils.js';
+import { fetchPack } from './api.js';
+import {
+  renderCardHTML,
+  renderDeckBadgesHTML,
+  renderSpellsHTML,
+  showScreen,
+  logBattle,
+  setStatus,
+} from './render.js';
+import { CONFIG, sleep } from './utils.js';
 
 export const state = {
   pack: [],
@@ -18,7 +25,7 @@ export const state = {
 export function renderPack() {
   const grid = document.getElementById('packGrid');
   grid.innerHTML = '';
-  
+
   state.pack.forEach((char, i) => {
     const isSelected = state.selectedCards.includes(i);
     const div = document.createElement('div');
@@ -27,7 +34,7 @@ export function renderPack() {
     div.dataset.idx = i;
     grid.appendChild(div);
   });
-  
+
   document.getElementById('draftCount').textContent = state.selectedCards.length;
   document.getElementById('btnConfirmDraft').disabled = state.selectedCards.length < CONFIG.REQUIRED_DRAFT_CARDS;
 }
@@ -69,10 +76,19 @@ export function renderBattleState() {
   document.getElementById('playerCardSlot').innerHTML = `<div class="card battle-card" id="battleCardP">${renderCardHTML(pChar)}</div>`;
   document.getElementById('cpuCardSlot').innerHTML = `<div class="card battle-card" id="battleCardC">${renderCardHTML(cChar)}</div>`;
 
-  document.getElementById('playerDeckBadges').innerHTML = renderDeckBadgesHTML(state.playerDeck, pIdx);
-  document.getElementById('cpuDeckBadges').innerHTML = renderDeckBadgesHTML(state.cpuDeck, cIdx);
-  
-  document.getElementById('spellList').innerHTML = renderSpellsHTML(state.playerSpells, !state.waiting);
+  document.getElementById('playerDeckBadges').innerHTML = renderDeckBadgesHTML(
+    state.playerDeck,
+    pIdx,
+  );
+  document.getElementById('cpuDeckBadges').innerHTML = renderDeckBadgesHTML(
+    state.cpuDeck,
+    cIdx,
+  );
+
+  document.getElementById('spellList').innerHTML = renderSpellsHTML(
+    state.playerSpells,
+    !state.waiting,
+  );
 }
 
 export function endGame() {
@@ -97,7 +113,7 @@ export function endGame() {
     elements.title.textContent = 'Empate';
     elements.sub.textContent = 'Bruxos igualmente poderosos.';
   }
-  
+
   elements.score.textContent = `Você ${state.scoreP}  ×  ${state.scoreC} CPU`;
   over.classList.add('active');
 }
@@ -105,22 +121,33 @@ export function endGame() {
 export async function castSpell(spellIdx) {
   if (state.waiting) return;
   state.waiting = true;
-  document.getElementById('spellList').innerHTML = renderSpellsHTML(state.playerSpells, false);
+  document.getElementById('spellList').innerHTML = renderSpellsHTML(
+    state.playerSpells,
+    false,
+  );
 
   const sp = state.playerSpells[spellIdx];
   const pChar = state.playerDeck[getActiveIdx(state.playerDeck)];
   const cChar = state.cpuDeck[getActiveIdx(state.cpuDeck)];
 
   // Player Turn
-  const pDmg = Math.floor(sp.damage * (pChar.magic / 100) * (Math.random() * 0.4 + 0.8));
+  const pDmg = Math.floor(
+    sp.damage * (pChar.magic / 100) * (Math.random() * 0.4 + 0.8),
+  );
   if (sp.damage < 0) {
     const heal = Math.abs(pDmg);
     pChar.hp = Math.min(pChar.maxHp, pChar.hp + heal);
-    logBattle(`✨ ${sp.name} — você curou ${heal} HP! (${pChar.name}: ${pChar.hp} HP)`, 'heal');
+    logBattle(
+      `✨ ${sp.name} — você curou ${heal} HP! (${pChar.name}: ${pChar.hp} HP)`,
+      'heal',
+    );
     document.getElementById('battleCardP').classList.add('battling');
   } else {
     cChar.hp -= pDmg;
-    logBattle(`⚡ ${sp.name} → ${cChar.name} perdeu ${pDmg} HP! (${cChar.name}: ${Math.max(0, cChar.hp)} HP)`, 'win');
+    logBattle(
+      `⚡ ${sp.name} → ${cChar.name} perdeu ${pDmg} HP! (${cChar.name}: ${Math.max(0, cChar.hp)} HP)`,
+      'win',
+    );
     document.getElementById('battleCardC').classList.add('hit');
   }
 
@@ -128,16 +155,24 @@ export async function castSpell(spellIdx) {
 
   // CPU Turn
   const cpuSp = state.spells[Math.floor(Math.random() * state.spells.length)];
-  const cpuDmg = Math.floor(cpuSp.damage * (cChar.magic / 100) * (Math.random() * 0.4 + 0.8));
+  const cpuDmg = Math.floor(
+    cpuSp.damage * (cChar.magic / 100) * (Math.random() * 0.4 + 0.8),
+  );
 
   if (cpuSp.damage < 0) {
     const cpuHeal = Math.abs(cpuDmg);
     cChar.hp = Math.min(cChar.maxHp, cChar.hp + cpuHeal);
-    logBattle(`🧙 CPU: ${cpuSp.name} — CPU curou ${cpuHeal} HP! (${cChar.name}: ${cChar.hp} HP)`, 'heal');
+    logBattle(
+      `🧙 CPU: ${cpuSp.name} — CPU curou ${cpuHeal} HP! (${cChar.name}: ${cChar.hp} HP)`,
+      'heal',
+    );
     document.getElementById('battleCardC').classList.add('battling');
   } else {
     pChar.hp -= cpuDmg;
-    logBattle(`💀 CPU: ${cpuSp.name} → ${pChar.name} perdeu ${cpuDmg} HP! (${pChar.name}: ${Math.max(0, pChar.hp)} HP)`, 'lose');
+    logBattle(
+      `💀 CPU: ${cpuSp.name} → ${pChar.name} perdeu ${cpuDmg} HP! (${pChar.name}: ${Math.max(0, pChar.hp)} HP)`,
+      'lose',
+    );
     document.getElementById('battleCardP').classList.add('hit');
   }
 
@@ -174,7 +209,10 @@ export async function castSpell(spellIdx) {
   }
 
   setStatus('Escolha um feitiço para atacar!');
-  document.getElementById('spellList').innerHTML = renderSpellsHTML(state.playerSpells, true);
+  document.getElementById('spellList').innerHTML = renderSpellsHTML(
+    state.playerSpells,
+    true,
+  );
 }
 
 export function startBattle() {

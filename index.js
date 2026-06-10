@@ -1,7 +1,7 @@
 const express = require('express');
-const characterRoutes = require('./routes/characters');
-const spellRoutes = require('./routes/spells');
-const gameRoutes = require('./routes/game');
+const characterRoutes = require('./routes/characters.js');
+const spellRoutes = require('./routes/spells.js');
+const gameRoutes = require('./routes/game.js');
 
 const app = express();
 const PORT = 3000;
@@ -14,5 +14,6 @@ app.use('/api/spells', spellRoutes);
 app.use('/api', gameRoutes);
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.info(`Servidor rodando na porta ${PORT}`);
 });

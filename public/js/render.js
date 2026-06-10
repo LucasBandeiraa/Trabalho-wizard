@@ -30,33 +30,41 @@ export function renderCardHTML(char) {
 }
 
 export function renderDeckBadgesHTML(deck, activeIdx) {
-  return deck.map((char, i) => {
-    let cls = 'deck-thumb';
-    if (char.hp <= 0) cls += ' dead';
-    else if (i === activeIdx) cls += ' active';
-    
-    return `<div class="${cls}"><img src="${char.image}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png'"></div>`;
-  }).join('');
+  return deck
+    .map((char, i) => {
+      let cls = 'deck-thumb';
+      if (char.hp <= 0) cls += ' dead';
+      else if (i === activeIdx) cls += ' active';
+
+      return `<div class="${cls}"><img src="${char.image}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png'"></div>`;
+    })
+    .join('');
 }
 
 export function renderSpellsHTML(spells, enabled) {
-  return spells.map((sp, i) => {
-    const isHeal = sp.damage < 0;
-    const dmgLabel = isHeal ? `💚 +${Math.abs(sp.damage)} HP` : `💀 ${sp.damage} dmg`;
-    const dmgClass = isHeal ? 'spell-dmg heal' : 'spell-dmg attack';
-    const dis = enabled ? '' : 'disabled';
-    
-    return `
+  return spells
+    .map((sp, i) => {
+      const isHeal = sp.damage < 0;
+      const dmgLabel = isHeal
+        ? `💚 +${Math.abs(sp.damage)} HP`
+        : `💀 ${sp.damage} dmg`;
+      const dmgClass = isHeal ? 'spell-dmg heal' : 'spell-dmg attack';
+      const dis = enabled ? '' : 'disabled';
+
+      return `
       <button class="spell-btn" ${dis} data-idx="${i}">
         <div><span class="spell-name">${sp.name}</span><span class="spell-effect">${sp.effect}</span></div>
         <span class="${dmgClass}">${dmgLabel}</span>
       </button>
     `;
-  }).join('');
+    })
+    .join('');
 }
 
 export function showScreen(id) {
-  document.querySelectorAll('.screen').forEach((s) => s.classList.remove('active'));
+  document
+    .querySelectorAll('.screen')
+    .forEach((s) => s.classList.remove('active'));
   const el = document.getElementById(id);
   if (el) el.classList.add('active');
 }

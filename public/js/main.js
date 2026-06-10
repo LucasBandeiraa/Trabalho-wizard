@@ -1,5 +1,12 @@
 import { fetchPack, fetchSpells, fetchCpuDeck } from './api.js';
-import { state, renderPack, toggleDraftCard, rerollPack, startBattle, castSpell } from './game.js';
+import {
+  state,
+  renderPack,
+  toggleDraftCard,
+  rerollPack,
+  startBattle,
+  castSpell,
+} from './game.js';
 import { shuffleArray, CONFIG } from './utils.js';
 import { showScreen } from './render.js';
 
@@ -25,7 +32,10 @@ async function loadGame() {
   const cpuData = await fetchCpuDeck();
   state.cpuDeck = cpuData.deck;
 
-  state.playerSpells = shuffleArray(state.spells).slice(0, CONFIG.PLAYER_SPELLS_COUNT);
+  state.playerSpells = shuffleArray(state.spells).slice(
+    0,
+    CONFIG.PLAYER_SPELLS_COUNT,
+  );
 
   bar.style.width = '100%';
   msg.textContent = 'Pronto!';
@@ -60,7 +70,9 @@ function initEvents() {
     startBattle();
   });
 
-  document.getElementById('btnRerollPack').addEventListener('click', rerollPack);
+  document
+    .getElementById('btnRerollPack')
+    .addEventListener('click', rerollPack);
 
   document.getElementById('btnRestart').addEventListener('click', () => {
     document.getElementById('screen-over').classList.remove('active');

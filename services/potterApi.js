@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const CONSTANTS = require('../constants');
+const CONSTANTS = require('../constants.js');
 
 function shuffleArray(array) {
   const shuffled = [...array];
@@ -12,13 +12,17 @@ function shuffleArray(array) {
 
 async function fetchCharacters() {
   const page = Math.floor(Math.random() * CONSTANTS.MAX_PAGES) + 1;
-  const response = await fetch(`${CONSTANTS.API_BASE_URL}/characters?page[size]=${CONSTANTS.PAGE_SIZE}&page[number]=${page}`);
+  const response = await fetch(
+    `${CONSTANTS.API_BASE_URL}/characters?page[size]=${CONSTANTS.PAGE_SIZE}&page[number]=${page}`,
+  );
   if (!response.ok) throw new Error('Falha ao buscar personagens da API');
   return response.json();
 }
 
 async function fetchSpells() {
-  const response = await fetch(`${CONSTANTS.API_BASE_URL}/spells?page[size]=${CONSTANTS.PAGE_SIZE}`);
+  const response = await fetch(
+    `${CONSTANTS.API_BASE_URL}/spells?page[size]=${CONSTANTS.PAGE_SIZE}`,
+  );
   if (!response.ok) throw new Error('Falha ao buscar feitiços da API');
   return response.json();
 }

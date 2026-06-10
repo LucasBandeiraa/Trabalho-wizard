@@ -1,14 +1,16 @@
 const express = require('express');
-const { fetchCharacters, shuffleArray } = require('../services/potterApi');
-const { calculateCharacterStats } = require('../services/statsCalculator');
-const CONSTANTS = require('../constants');
+const { fetchCharacters, shuffleArray } = require('../services/potterApi.js');
+const { calculateCharacterStats } = require('../services/statsCalculator.js');
+const CONSTANTS = require('../constants.js');
 
 const router = express.Router();
 
 router.post('/cpu-deck', async (req, res) => {
   try {
     const result = await fetchCharacters();
-    const validCharacters = result.data.filter((char) => char.attributes.name && char.attributes.image);
+    const validCharacters = result.data.filter(
+      (char) => char.attributes.name && char.attributes.image,
+    );
 
     const processed = validCharacters.map((char) => {
       const { attributes } = char;
